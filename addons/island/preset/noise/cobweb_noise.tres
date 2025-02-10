@@ -1,0 +1,12 @@
+[gd_resource type="FastNoiseLite" format=3 uid="uid://djiwx455nj7h2"]
+
+[resource]
+noise_type = 2
+seed = 1262529918
+fractal_type = 3
+fractal_octaves = 4
+fractal_gain = 0.9
+fractal_weighted_strength = 0.7
+fractal_ping_pong_strength = 3.0
+cellular_return_type = 2
+domain_warp_fractal_gain = 0.0

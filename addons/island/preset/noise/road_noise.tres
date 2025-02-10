@@ -1,0 +1,9 @@
+[gd_resource type="FastNoiseLite" format=3 uid="uid://bgcbykwevvwrr"]
+
+[resource]
+fractal_type = 2
+fractal_gain = 0.025
+fractal_weighted_strength = 1.0
+domain_warp_type = 2
+domain_warp_frequency = -0.015
+domain_warp_fractal_type = 0

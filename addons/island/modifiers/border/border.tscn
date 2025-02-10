@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://dedssmjg75lk3"]
+
+[ext_resource type="Script" path="res://addons/island/modifiers/border/border.gd" id="1_02a63"]
+
+[node name="Border" type="StaticBody2D"]
+z_index = 3
+collision_layer = 6
+collision_mask = 0
+script = ExtResource("1_02a63")
+color = Color(0, 0, 0, 0.2)
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+invert_border = 416.6
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]

@@ -1,0 +1,316 @@
+[gd_scene load_steps=56 format=4 uid="uid://cpt0jdo8oa6rh"]
+
+[ext_resource type="Script" path="res://addons/island/island.gd" id="1_2yg1q"]
+[ext_resource type="PackedScene" uid="uid://cfd4ei87mcvly" path="res://addons/island/preset/tscn/canoe.tscn" id="2_h6eqp"]
+[ext_resource type="PackedScene" uid="uid://coiiqvkr6hla1" path="res://addons/island/preset/tscn/tree.tscn" id="3_vci0o"]
+[ext_resource type="PackedScene" uid="uid://7gtgk0sk5ge2" path="res://addons/island/preset/tscn/stone.tscn" id="4_4odhk"]
+[ext_resource type="Script" path="res://addons/island/modifiers/modifier.gd" id="5_51dmw"]
+[ext_resource type="PackedScene" uid="uid://dg0n8mh3ls22l" path="res://addons/island/preset/tscn/home.tscn" id="5_382h0"]
+[ext_resource type="PackedScene" uid="uid://bgmpymjclspgn" path="res://addons/island/preset/tscn/big_wave.tscn" id="5_cx2c5"]
+[ext_resource type="Script" path="res://addons/island/combined_noise.gd" id="5_o2wfv"]
+[ext_resource type="Script" path="res://addons/island/preset/camera_2d.gd" id="6_jmc07"]
+[ext_resource type="PackedScene" uid="uid://74j48jeaemnd" path="res://addons/island/preset/tscn/pine_tree.tscn" id="6_lurga"]
+[ext_resource type="Script" path="res://addons/island/modifiers/border/resourse_border.gd" id="7_4xc4n"]
+[ext_resource type="Script" path="res://addons/island/settings.gd" id="7_vx7bo"]
+[ext_resource type="FastNoiseLite" uid="uid://djiwx455nj7h2" path="res://addons/island/preset/noise/cobweb_noise.tres" id="9_gb7g6"]
+[ext_resource type="Script" path="res://addons/island/tile_data.gd" id="9_ivcts"]
+[ext_resource type="Script" path="res://addons/island/tile_map_layer_tile_info.gd" id="10_71uuc"]
+[ext_resource type="Script" path="res://addons/island/tile_noise.gd" id="10_hb3lw"]
+[ext_resource type="FastNoiseLite" uid="uid://dop1ldabsteiw" path="res://addons/island/preset/noise/white_noise.tres" id="13_cgbtu"]
+[ext_resource type="Script" path="res://addons/island/preset/canvas_layer.gd" id="18_g844b"]
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_6uvxn"]
+scenes/1/scene = ExtResource("2_h6eqp")
+scenes/2/scene = ExtResource("5_382h0")
+scenes/3/scene = ExtResource("4_4odhk")
+scenes/4/scene = ExtResource("3_vci0o")
+scenes/5/scene = ExtResource("6_lurga")
+
+[sub_resource type="TileSet" id="TileSet_tbv0x"]
+sources/0 = SubResource("TileSetScenesCollectionSource_6uvxn")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_khudm"]
+scenes/1/scene = ExtResource("5_cx2c5")
+scenes/2/scene = ExtResource("6_lurga")
+
+[sub_resource type="TileSet" id="TileSet_p8o5u"]
+sources/0 = SubResource("TileSetScenesCollectionSource_khudm")
+
+[sub_resource type="Resource" id="Resource_kmjah"]
+script = ExtResource("7_4xc4n")
+inner_size = 8
+color = Color(0, 0, 0, 0.2)
+enabled = false
+
+[sub_resource type="Gradient" id="Gradient_kh4u0"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8)
+colors = PackedColorArray(0, 0, 0, 0.957, 0.2, 0.2, 0.2, 1, 0.4, 0.4, 0.4, 1, 0.6, 0.6, 0.6, 1, 0.8, 0.8, 0.8, 1)
+metadata/_snap_enabled = true
+metadata/_snap_count = 5
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_eskls"]
+gradient = SubResource("Gradient_kh4u0")
+width = 16384
+
+[sub_resource type="Gradient" id="Gradient_e7kal"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.875)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+metadata/_snap_enabled = true
+metadata/_snap_count = 8
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_5klid"]
+gradient = SubResource("Gradient_e7kal")
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0, 0)
+metadata/_snap_enabled = true
+metadata/_snap_count = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_e3fq1"]
+width = 64
+height = 64
+noise = ExtResource("9_gb7g6")
+
+[sub_resource type="Resource" id="Resource_ofvd2"]
+resource_name = "main"
+script = ExtResource("5_o2wfv")
+title = "main"
+noise_texture = SubResource("NoiseTexture2D_e3fq1")
+coloring = SubResource("GradientTexture1D_eskls")
+falloff_map = SubResource("GradientTexture2D_5klid")
+
+[sub_resource type="Gradient" id="Gradient_gbfyj"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.25)
+colors = PackedColorArray(0, 0, 0, 0.1, 1, 1, 1, 0)
+metadata/_snap_enabled = true
+metadata/_snap_count = 4
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_vr4im"]
+gradient = SubResource("Gradient_gbfyj")
+width = 16384
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_h2o34"]
+noise_type = 2
+seed = -481031382
+frequency = 0.1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_mwq1i"]
+width = 64
+height = 64
+noise = SubResource("FastNoiseLite_h2o34")
+
+[sub_resource type="Resource" id="Resource_ihr56"]
+resource_name = "layer2"
+script = ExtResource("5_o2wfv")
+title = "layer2"
+noise_texture = SubResource("NoiseTexture2D_mwq1i")
+coloring = SubResource("GradientTexture1D_vr4im")
+falloff_map = SubResource("GradientTexture2D_5klid")
+
+[sub_resource type="Resource" id="Resource_7h3vt"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 0
+noise_layer = 0
+collection_id = 0
+scene_id = 4
+
+[sub_resource type="Resource" id="Resource_3yy3n"]
+script = ExtResource("10_hb3lw")
+noise = ExtResource("13_cgbtu")
+min = 0.7
+max = 1.0
+
+[sub_resource type="Resource" id="Resource_wtshc"]
+resource_name = "tree"
+script = ExtResource("9_ivcts")
+title = "tree"
+tile_info = SubResource("Resource_7h3vt")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_3yy3n")
+minimum = -0.2
+maximum = 0.1
+
+[sub_resource type="Resource" id="Resource_sgocp"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 0
+noise_layer = 0
+collection_id = 0
+scene_id = 3
+
+[sub_resource type="Resource" id="Resource_yacpm"]
+script = ExtResource("10_hb3lw")
+noise = ExtResource("13_cgbtu")
+min = 0.9
+max = 1.0
+
+[sub_resource type="Resource" id="Resource_pkqc5"]
+resource_name = "stone"
+script = ExtResource("9_ivcts")
+title = "stone"
+tile_info = SubResource("Resource_sgocp")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_yacpm")
+minimum = 0.0
+maximum = 0.2
+
+[sub_resource type="Resource" id="Resource_tiro4"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 0
+noise_layer = 0
+collection_id = 0
+scene_id = 1
+
+[sub_resource type="Resource" id="Resource_tfb0c"]
+script = ExtResource("10_hb3lw")
+noise = ExtResource("13_cgbtu")
+min = 0.95
+max = 1.0
+
+[sub_resource type="Resource" id="Resource_67iv5"]
+resource_name = "canoe"
+script = ExtResource("9_ivcts")
+title = "canoe"
+tile_info = SubResource("Resource_tiro4")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_tfb0c")
+minimum = -0.3
+maximum = -0.25
+
+[sub_resource type="Resource" id="Resource_nuvr5"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 0
+noise_layer = 0
+collection_id = 0
+scene_id = 2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_gap71"]
+seed = 1308146517
+fractal_octaves = 10
+fractal_gain = 0.8
+
+[sub_resource type="Resource" id="Resource_757ac"]
+script = ExtResource("10_hb3lw")
+noise = SubResource("FastNoiseLite_gap71")
+min = -1.0
+max = -0.35
+
+[sub_resource type="Resource" id="Resource_qq2vb"]
+resource_name = "home"
+script = ExtResource("9_ivcts")
+title = "home"
+tile_info = SubResource("Resource_nuvr5")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_757ac")
+minimum = -0.1
+maximum = 0.0
+
+[sub_resource type="Resource" id="Resource_mg41d"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 1
+noise_layer = 0
+collection_id = 0
+scene_id = 1
+
+[sub_resource type="Resource" id="Resource_6r71v"]
+script = ExtResource("10_hb3lw")
+noise = ExtResource("13_cgbtu")
+min = 0.9
+max = 1.0
+
+[sub_resource type="Resource" id="Resource_iq7uc"]
+resource_name = "big_wave"
+script = ExtResource("9_ivcts")
+title = "big_wave"
+tile_info = SubResource("Resource_mg41d")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_6r71v")
+minimum = -1.0
+maximum = -0.3
+
+[sub_resource type="Resource" id="Resource_m2x8f"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 0
+noise_layer = 0
+collection_id = 0
+scene_id = 5
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_h1c5d"]
+seed = -119411811
+frequency = 0.2
+
+[sub_resource type="Resource" id="Resource_hdkbt"]
+script = ExtResource("10_hb3lw")
+noise = SubResource("FastNoiseLite_h1c5d")
+min = 0.0
+max = 1.0
+
+[sub_resource type="Resource" id="Resource_ytsq0"]
+resource_name = "pine_tree"
+script = ExtResource("9_ivcts")
+title = "pine_tree"
+tile_info = SubResource("Resource_m2x8f")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_hdkbt")
+minimum = 0.1
+maximum = 0.4
+
+[sub_resource type="Resource" id="Resource_kstno"]
+script = ExtResource("7_vx7bo")
+world_size = Vector2i(1024, 1024)
+noise_layers = Array[ExtResource("5_o2wfv")]([SubResource("Resource_ofvd2"), SubResource("Resource_ihr56")])
+creating_tile = true
+tile = Array[ExtResource("9_ivcts")]([SubResource("Resource_wtshc"), SubResource("Resource_pkqc5"), SubResource("Resource_67iv5"), SubResource("Resource_qq2vb"), SubResource("Resource_iq7uc"), SubResource("Resource_ytsq0")])
+modifier = Array[ExtResource("5_51dmw")]([SubResource("Resource_kmjah")])
+
+[node name="TestWorld" type="Node2D"]
+
+[node name="TileMap" type="Node2D" parent="."]
+z_index = 3
+
+[node name="TileMapLayer" type="TileMapLayer" parent="TileMap"]
+z_index = 1
+tile_map_data = PackedByteArray("AAAFAAwAAAAAAAAABQA3AAYAAAAAAAAABAAMADIAAAAAAAAABAAUABoAAAAAAAAABAAjAAgAAAAAAAAABAApAA0AAAAAAAAABAAqAAkAAAAAAAAABAArAAsAAAAAAAAABAAuADUAAAAAAAAABAAPABsAAAAAAAAABQARACoAAAAAAAAABQAjAAQAAAAAAAAABAAuAAUAAAAAAAAABAA3AAQAAAAAAAAABAAFAAUAAAAAAAAABAAFADkAAAAAAAAABAAGAAkAAAAAAAAABAAHADkAAAAAAAAABAAHADoAAAAAAAAABAAIAAQAAAAAAAAABAAIAAcAAAAAAAAABAAIAAwAAAAAAAAABAAIABwAAAAAAAAABAAJAB8AAAAAAAAABAAJADIAAAAAAAAABAAKAAoAAAAAAAAABAALABEAAAAAAAAABAAPAAUAAAAAAAAABAAPAC8AAAAAAAAABAAPADkAAAAAAAAABAAQAAwAAAAAAAAABAAQADgAAAAAAAAABAARAA4AAAAAAAAABAARAA8AAAAAAAAAAwARABoAAAAAAAAABAASABYAAAAAAAAABAASABkAAAAAAAAABAATABgAAAAAAAAABAAUABMAAAAAAAAAAwAUADQAAAAAAAAABAAVAA8AAAAAAAAABAAVADEAAAAAAAAABAAWAA4AAAAAAAAABAAWAC0AAAAAAAAABAAWAC8AAAAAAAAABAAWADgAAAAAAAAABAAXAA0AAAAAAAAABAAXABMAAAAAAAAABAAXADIAAAAAAAAABAAXADcAAAAAAAAABAAYABgAAAAAAAAABAAYADMAAAAAAAAABAAYADUAAAAAAAAABAAZABcAAAAAAAAABAAZACEAAAAAAAAABAAZAC8AAAAAAAAABAAZADAAAAAAAAAABAAaABYAAAAAAAAABAAaABgAAAAAAAAABAAaABwAAAAAAAAABAAaADIAAAAAAAAABAAaADQAAAAAAAAABAAbACUAAAAAAAAABAAbACYAAAAAAAAABAAbAC4AAAAAAAAABAAbADIAAAAAAAAABAAbADMAAAAAAAAABAAcADEAAAAAAAAABAAdABMAAAAAAAAABAAdACYAAAAAAAAABAAdACgAAAAAAAAABAAdACkAAAAAAAAAAwAdACwAAAAAAAAABAAeABIAAAAAAAAABAAeABgAAAAAAAAABAAeACUAAAAAAAAABAAfAA4AAAAAAAAABAAfABEAAAAAAAAABAAfABYAAAAAAAAABAAfABwAAAAAAAAAAwAfACIAAAAAAAAABAAfACwAAAAAAAAABAAfAC8AAAAAAAAABAAgABIAAAAAAAAABAAgABMAAAAAAAAABAAgABsAAAAAAAAAAwAgAB4AAAAAAAAABAAgACgAAAAAAAAABAAgACwAAAAAAAAABAAgAC4AAAAAAAAABAAhAA8AAAAAAAAABAAhACoAAAAAAAAABAAhAC0AAAAAAAAABAAiAAUAAAAAAAAABAAiABEAAAAAAAAABAAiABYAAAAAAAAABAAiACwAAAAAAAAABAAiADIAAAAAAAAABAAjACAAAAAAAAAABAAjACUAAAAAAAAABAAjACoAAAAAAAAABAAjAC0AAAAAAAAABAAjADEAAAAAAAAABAAjADgAAAAAAAAABAAkAAwAAAAAAAAABAAkABoAAAAAAAAABAAkACIAAAAAAAAABAAkADQAAAAAAAAABAAkADoAAAAAAAAABAAkADsAAAAAAAAABAAlAAoAAAAAAAAABAAlAC8AAAAAAAAABAAlADMAAAAAAAAABAAlADYAAAAAAAAABAAmAA0AAAAAAAAABAAmACoAAAAAAAAABAAmAC4AAAAAAAAABAAmADYAAAAAAAAABAAnAAYAAAAAAAAABAAnABoAAAAAAAAABAAnACIAAAAAAAAABAAnACYAAAAAAAAABAAoAAYAAAAAAAAABAAoACAAAAAAAAAABAAoACMAAAAAAAAABAAoACUAAAAAAAAABAAoADMAAAAAAAAABAAoADQAAAAAAAAABAAoADcAAAAAAAAABAApABwAAAAAAAAABAApACcAAAAAAAAABAApACgAAAAAAAAABAApADUAAAAAAAAABAApADYAAAAAAAAABAAqAB8AAAAAAAAABAAqACYAAAAAAAAABAAqACkAAAAAAAAABAArACIAAAAAAAAABAArACUAAAAAAAAABAArAC4AAAAAAAAABAArADgAAAAAAAAABAAsAB0AAAAAAAAABAAsAB8AAAAAAAAABAAsACAAAAAAAAAABAAsACEAAAAAAAAABAAtAAsAAAAAAAAABAAuACIAAAAAAAAABAAuACUAAAAAAAAABAAuACsAAAAAAAAABAAuAC0AAAAAAAAABAAuADYAAAAAAAAABAAuADgAAAAAAAAABAAvACEAAAAAAAAABAAvACUAAAAAAAAABAAvADAAAAAAAAAABAAwACMAAAAAAAAABAAwADMAAAAAAAAABAAwADYAAAAAAAAABAAxAAUAAAAAAAAABAAxACgAAAAAAAAABAAyACYAAAAAAAAABAAyACoAAAAAAAAABAAyADoAAAAAAAAABAAzADAAAAAAAAAABAAzADsAAAAAAAAABAA0AC8AAAAAAAAABAA0ADAAAAAAAAAABAA0ADUAAAAAAAAABAA1ACMAAAAAAAAABAA1ACoAAAAAAAAABAA1AC4AAAAAAAAABAA1ADcAAAAAAAAABAA1ADkAAAAAAAAABAA2ADgAAAAAAAAABAA2ADkAAAAAAAAABAA3AAwAAAAAAAAABAA3ACcAAAAAAAAABAA3ACoAAAAAAAAABAA3ACwAAAAAAAAABAA4AA0AAAAAAAAABAA4ACcAAAAAAAAABAA4AC8AAAAAAAAABAA4ADYAAAAAAAAABAA4ADoAAAAAAAAABAA5AAUAAAAAAAAABAA5ACoAAAAAAAAABAA5ADYAAAAAAAAABAA5ADkAAAAAAAAABAA5ADsAAAAAAAAABAA6AAcAAAAAAAAABAA6AAwAAAAAAAAABAA6AC0AAAAAAAAABAA6ADQAAAAAAAAABAA6ADUAAAAAAAAABAA6ADoAAAAAAAAABAA7AAsAAAAAAAAABAA7ADAAAAAAAAAABAAEABkAAAAAAAAAAwAGABwAAAAAAAAABQAHAA4AAAAAAAAAAwAHACEAAAAAAAAABQANACMAAAAAAAAABQAOABoAAAAAAAAABQAaACYAAAAAAAAABQAfACQAAAAAAAAAAwAgACUAAAAAAAAABQAEADcAAAAAAAAAAgAFADQAAAAAAAAAAgAIADMAAAAAAAAAAgAJADgAAAAAAAAAAgAKADIAAAAAAAAAAgALADIAAAAAAAAAAgAEAAgAAAAAAAAABQAEAAoAAAAAAAAABQAEAAsAAAAAAAAABQAEAAwAAAAAAAAABQAEAA0AAAAAAAAABQAEABEAAAAAAAAABQAEABIAAAAAAAAABQAEABcAAAAAAAAABQAEABgAAAAAAAAABQAEABsAAAAAAAAABQAEAB8AAAAAAAAABQAEACAAAAAAAAAABQAEACEAAAAAAAAABQAEACIAAAAAAAAABQAEACgAAAAAAAAABQAEAC8AAAAAAAAABQAFAAoAAAAAAAAABQAFAAsAAAAAAAAABQAFABAAAAAAAAAABQAFABEAAAAAAAAABQAFABIAAAAAAAAABQAFABMAAAAAAAAABQAFABQAAAAAAAAABQAFABcAAAAAAAAABQAFABgAAAAAAAAABQAFABsAAAAAAAAABQAFABwAAAAAAAAABQAFAB4AAAAAAAAABQAFAB8AAAAAAAAABQAFACAAAAAAAAAABQAFACEAAAAAAAAABQAFACIAAAAAAAAABQAFACMAAAAAAAAABQAFACQAAAAAAAAABQAFACkAAAAAAAAABQAFACoAAAAAAAAABQAGAAwAAAAAAAAABQAGAA8AAAAAAAAABQAGABAAAAAAAAAABQAGABEAAAAAAAAABQAGABIAAAAAAAAABQAGABMAAAAAAAAABQAGABQAAAAAAAAABQAGABsAAAAAAAAABQAGACAAAAAAAAAABQAGACEAAAAAAAAABQAGACIAAAAAAAAABQAGACMAAAAAAAAABQAGACQAAAAAAAAABQAGACUAAAAAAAAABQAGACkAAAAAAAAABQAGACoAAAAAAAAABQAGACsAAAAAAAAABQAGAC0AAAAAAAAABQAGAC4AAAAAAAAABQAGADEAAAAAAAAABQAHABIAAAAAAAAABQAHABMAAAAAAAAABQAHACAAAAAAAAAABQAHACIAAAAAAAAABQAHACMAAAAAAAAABQAHACQAAAAAAAAABQAHACsAAAAAAAAABQAHACwAAAAAAAAABQAHAC0AAAAAAAAABQAHAC4AAAAAAAAABQAHAC8AAAAAAAAABQAIACAAAAAAAAAABQAIACEAAAAAAAAABQAIACIAAAAAAAAABQAIACgAAAAAAAAABQAIAC4AAAAAAAAABQAIAC8AAAAAAAAABQAJABYAAAAAAAAABQAJABcAAAAAAAAABQAJABgAAAAAAAAABQAJABkAAAAAAAAABQAJACAAAAAAAAAABQAJACEAAAAAAAAABQAJACIAAAAAAAAABQAJADAAAAAAAAAABQAKABMAAAAAAAAABQAKABQAAAAAAAAABQAKABUAAAAAAAAABQAKABYAAAAAAAAABQAKABcAAAAAAAAABQAKABgAAAAAAAAABQAKABkAAAAAAAAABQAKAB8AAAAAAAAABQAKACAAAAAAAAAABQAKACEAAAAAAAAABQAKACQAAAAAAAAABQAKACwAAAAAAAAABQAKAC4AAAAAAAAABQAKAC8AAAAAAAAABQALABMAAAAAAAAABQALABgAAAAAAAAABQALABsAAAAAAAAABQALAB8AAAAAAAAABQALACAAAAAAAAAABQALACEAAAAAAAAABQALACIAAAAAAAAABQALACMAAAAAAAAABQALACQAAAAAAAAABQALACUAAAAAAAAABQALACYAAAAAAAAABQALACgAAAAAAAAABQALACsAAAAAAAAABQALACwAAAAAAAAABQALAC0AAAAAAAAABQALAC4AAAAAAAAABQAMABcAAAAAAAAABQAMABgAAAAAAAAABQAMABkAAAAAAAAABQAMABoAAAAAAAAABQAMABsAAAAAAAAABQAMABwAAAAAAAAABQAMACAAAAAAAAAABQAMACEAAAAAAAAABQAMACIAAAAAAAAABQAMACMAAAAAAAAABQAMACQAAAAAAAAABQAMACUAAAAAAAAABQAMACgAAAAAAAAABQAMACkAAAAAAAAABQAMACsAAAAAAAAABQAMAC0AAAAAAAAABQANABYAAAAAAAAABQANABcAAAAAAAAABQANABgAAAAAAAAABQANABkAAAAAAAAABQANABoAAAAAAAAABQANABsAAAAAAAAABQANABwAAAAAAAAABQANAB0AAAAAAAAABQANACIAAAAAAAAABQANACcAAAAAAAAABQANACgAAAAAAAAABQANACkAAAAAAAAABQANACoAAAAAAAAABQAOABQAAAAAAAAABQAOABYAAAAAAAAABQAOABcAAAAAAAAABQAOABgAAAAAAAAABQAOABkAAAAAAAAABQAOABsAAAAAAAAABQAOABwAAAAAAAAABQAOAB0AAAAAAAAABQAOACIAAAAAAAAABQAOACcAAAAAAAAABQAOACgAAAAAAAAABQAOACkAAAAAAAAABQAOACoAAAAAAAAABQAOACwAAAAAAAAABQAPABEAAAAAAAAABQAPABIAAAAAAAAABQAPABMAAAAAAAAABQAPABQAAAAAAAAABQAPABUAAAAAAAAABQAPABYAAAAAAAAABQAPABwAAAAAAAAABQAPACUAAAAAAAAABQAPACcAAAAAAAAABQAPACsAAAAAAAAABQAPACwAAAAAAAAABQAPAC0AAAAAAAAABQAQABEAAAAAAAAABQAQABIAAAAAAAAABQAQABMAAAAAAAAABQAQABQAAAAAAAAABQAQABUAAAAAAAAABQAQACAAAAAAAAAABQAQACEAAAAAAAAABQAQACIAAAAAAAAABQAQACQAAAAAAAAABQAQACUAAAAAAAAABQAQACYAAAAAAAAABQAQACoAAAAAAAAABQAQACsAAAAAAAAABQAQACwAAAAAAAAABQARABAAAAAAAAAABQARABEAAAAAAAAABQARABIAAAAAAAAABQARABMAAAAAAAAABQARABQAAAAAAAAABQARACEAAAAAAAAABQARACIAAAAAAAAABQARACMAAAAAAAAABQARACQAAAAAAAAABQARACUAAAAAAAAABQARACYAAAAAAAAABQARACsAAAAAAAAABQASABEAAAAAAAAABQASACEAAAAAAAAABQASACIAAAAAAAAABQASACMAAAAAAAAABQASACQAAAAAAAAABQASACUAAAAAAAAABQASACYAAAAAAAAABQASACkAAAAAAAAABQASACoAAAAAAAAABQASAC4AAAAAAAAABQATACMAAAAAAAAABQATACQAAAAAAAAABQATACUAAAAAAAAABQATACYAAAAAAAAABQATACoAAAAAAAAABQAUACAAAAAAAAAABQAUACQAAAAAAAAABQAUACUAAAAAAAAABQAUACYAAAAAAAAABQAUACgAAAAAAAAABQAVAB8AAAAAAAAABQAVACAAAAAAAAAABQAVACEAAAAAAAAABQAWAB0AAAAAAAAABQAWAB4AAAAAAAAABQAWAB8AAAAAAAAABQAWACAAAAAAAAAABQAWACEAAAAAAAAABQAWACIAAAAAAAAABQAWACMAAAAAAAAABQAWACkAAAAAAAAABQAXAB8AAAAAAAAABQAXACAAAAAAAAAABQAXACEAAAAAAAAABQAXACIAAAAAAAAABQAXACMAAAAAAAAABQAXACUAAAAAAAAABQAXACYAAAAAAAAABQAXACkAAAAAAAAABQAXACoAAAAAAAAABQAXACsAAAAAAAAABQAYAB8AAAAAAAAABQAYACEAAAAAAAAABQAYACQAAAAAAAAABQAYACUAAAAAAAAABQAYACYAAAAAAAAABQAYACcAAAAAAAAABQAYACsAAAAAAAAABQAYACwAAAAAAAAABQAZACUAAAAAAAAABQAZACYAAAAAAAAABQAZACcAAAAAAAAABQAZACgAAAAAAAAABQAaAB8AAAAAAAAABQAaACQAAAAAAAAABQAaACUAAAAAAAAABQAaACcAAAAAAAAABQAaACgAAAAAAAAABQAaACsAAAAAAAAABQAbACcAAAAAAAAABQAbACgAAAAAAAAABQAbACoAAAAAAAAABQAcACEAAAAAAAAABQAcACwAAAAAAAAABQAdACIAAAAAAAAABQAeACIAAAAAAAAABQAeACMAAAAAAAAABQAfACMAAAAAAAAABQA=")
+tile_set = SubResource("TileSet_tbv0x")
+
+[node name="TileMapLayer2" type="TileMapLayer" parent="TileMap"]
+tile_map_data = PackedByteArray("AAAwABUAAAAAAAAAAQAzABIAAAAAAAAAAQAzABUAAAAAAAAAAQA5ACAAAAAAAAAAAQA6AB8AAAAAAAAAAQA=")
+tile_set = SubResource("TileSet_p8o5u")
+
+[node name="Island" type="Node2D" parent="." node_paths=PackedStringArray("tile_map_layers")]
+script = ExtResource("1_2yg1q")
+tile_map_layers = [NodePath("../TileMap/TileMapLayer"), NodePath("../TileMap/TileMapLayer2")]
+settings = SubResource("Resource_kstno")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+visible = false
+script = ExtResource("6_jmc07")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+visible = false
+script = ExtResource("18_g844b")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -66.5
+offset_top = -31.0
+offset_right = 66.5
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Generate" type="Button" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+text = "Generate"
+
+[node name="Clear" type="Button" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+text = "Clear"
+
+[connection signal="pressed" from="CanvasLayer/HBoxContainer/Generate" to="CanvasLayer" method="_on_generate_pressed"]
+[connection signal="pressed" from="CanvasLayer/HBoxContainer/Clear" to="CanvasLayer" method="_on_clear_pressed"]

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dg0n8mh3ls22l"]
+
+[ext_resource type="Texture2D" uid="uid://bqcinv2cgcr2q" path="res://addons/island/preset/textures/home.svg" id="1_pxqvd"]
+
+[node name="Home" type="TextureRect"]
+custom_minimum_size = Vector2(16, 16)
+texture = ExtResource("1_pxqvd")
+expand_mode = 1

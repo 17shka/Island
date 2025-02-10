@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cfd4ei87mcvly"]
+
+[ext_resource type="Texture2D" uid="uid://cgh1lvh771frf" path="res://addons/island/preset/textures/canoe.svg" id="1_ftwsp"]
+
+[node name="Canoe" type="TextureRect"]
+custom_minimum_size = Vector2(16, 16)
+texture = ExtResource("1_ftwsp")
+expand_mode = 1

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgmpymjclspgn"]
+
+[ext_resource type="Texture2D" uid="uid://dha47t824hjll" path="res://addons/island/preset/textures/big-wave.svg" id="1_uqqxs"]
+
+[node name="BigWave" type="TextureRect"]
+custom_minimum_size = Vector2(32, 32)
+texture = ExtResource("1_uqqxs")
+expand_mode = 1

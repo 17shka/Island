@@ -1,0 +1,177 @@
+[gd_scene load_steps=37 format=4 uid="uid://cpt0jdo8oa6rh"]
+
+[ext_resource type="Script" path="res://addons/island/island.gd" id="1_2yg1q"]
+[ext_resource type="PackedScene" uid="uid://cfd4ei87mcvly" path="res://addons/island/preset/tscn/canoe.tscn" id="2_h6eqp"]
+[ext_resource type="PackedScene" uid="uid://coiiqvkr6hla1" path="res://addons/island/preset/tscn/tree.tscn" id="3_vci0o"]
+[ext_resource type="PackedScene" uid="uid://7gtgk0sk5ge2" path="res://addons/island/preset/tscn/stone.tscn" id="4_4odhk"]
+[ext_resource type="Script" path="res://addons/island/modifiers/modifier.gd" id="5_51dmw"]
+[ext_resource type="PackedScene" uid="uid://dg0n8mh3ls22l" path="res://addons/island/preset/tscn/home.tscn" id="5_382h0"]
+[ext_resource type="Script" path="res://addons/island/combined_noise.gd" id="5_o2wfv"]
+[ext_resource type="Script" path="res://addons/island/preset/camera_2d.gd" id="6_jmc07"]
+[ext_resource type="Script" path="res://addons/island/modifiers/border/resourse_border.gd" id="7_4xc4n"]
+[ext_resource type="Script" path="res://addons/island/settings.gd" id="7_vx7bo"]
+[ext_resource type="FastNoiseLite" uid="uid://djiwx455nj7h2" path="res://addons/island/preset/noise/ping-pong.tres" id="9_gb7g6"]
+[ext_resource type="Script" path="res://addons/island/tile_data.gd" id="9_ivcts"]
+[ext_resource type="Script" path="res://addons/island/tile_map_layer_tile_info.gd" id="10_71uuc"]
+[ext_resource type="Script" path="res://addons/island/tile_noise.gd" id="10_hb3lw"]
+[ext_resource type="FastNoiseLite" uid="uid://dop1ldabsteiw" path="res://addons/island/preset/noise/white_noise.tres" id="13_cgbtu"]
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_6uvxn"]
+scenes/1/scene = ExtResource("2_h6eqp")
+scenes/2/scene = ExtResource("5_382h0")
+scenes/3/scene = ExtResource("4_4odhk")
+scenes/4/scene = ExtResource("3_vci0o")
+
+[sub_resource type="TileSet" id="TileSet_tbv0x"]
+sources/0 = SubResource("TileSetScenesCollectionSource_6uvxn")
+
+[sub_resource type="Resource" id="Resource_kmjah"]
+script = ExtResource("7_4xc4n")
+inner_size = 8
+color = Color(0, 0, 0, 0.2)
+enabled = true
+
+[sub_resource type="Gradient" id="Gradient_pbxoo"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.2, 0.2, 0.2, 1, 0.4, 0.4, 0.4, 1, 0.6, 0.6, 0.6, 1, 0.8, 0.8, 0.8, 1, 1, 1, 1, 1)
+metadata/_snap_enabled = true
+metadata/_snap_count = 5
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_31xg7"]
+gradient = SubResource("Gradient_pbxoo")
+width = 16384
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_b0mnp"]
+width = 64
+height = 64
+noise = ExtResource("9_gb7g6")
+
+[sub_resource type="Resource" id="Resource_ofvd2"]
+script = ExtResource("5_o2wfv")
+noise_texture = SubResource("NoiseTexture2D_b0mnp")
+gradient_texture = SubResource("GradientTexture1D_31xg7")
+
+[sub_resource type="Resource" id="Resource_7h3vt"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 0
+noise_layer = 0
+collection_id = 0
+scene_id = 4
+
+[sub_resource type="Resource" id="Resource_3yy3n"]
+script = ExtResource("10_hb3lw")
+noise = ExtResource("13_cgbtu")
+min = 0.7
+max = 1.0
+
+[sub_resource type="Resource" id="Resource_wtshc"]
+resource_name = "tree"
+script = ExtResource("9_ivcts")
+title = "tree"
+tile_info = SubResource("Resource_7h3vt")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_3yy3n")
+minimum = -0.2
+maximum = 0.0
+
+[sub_resource type="Resource" id="Resource_sgocp"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 0
+noise_layer = 0
+collection_id = 0
+scene_id = 3
+
+[sub_resource type="Resource" id="Resource_yacpm"]
+script = ExtResource("10_hb3lw")
+noise = ExtResource("13_cgbtu")
+min = 0.9
+max = 1.0
+
+[sub_resource type="Resource" id="Resource_pkqc5"]
+resource_name = "stone"
+script = ExtResource("9_ivcts")
+title = "stone"
+tile_info = SubResource("Resource_sgocp")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_yacpm")
+minimum = 0.0
+maximum = 0.2
+
+[sub_resource type="Resource" id="Resource_tiro4"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 0
+noise_layer = 0
+collection_id = 0
+scene_id = 1
+
+[sub_resource type="Resource" id="Resource_tfb0c"]
+script = ExtResource("10_hb3lw")
+noise = ExtResource("13_cgbtu")
+min = 0.95
+max = 1.0
+
+[sub_resource type="Resource" id="Resource_67iv5"]
+resource_name = "canoe"
+script = ExtResource("9_ivcts")
+title = "canoe"
+tile_info = SubResource("Resource_tiro4")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_tfb0c")
+minimum = -0.3
+maximum = -0.25
+
+[sub_resource type="Resource" id="Resource_nuvr5"]
+script = ExtResource("10_71uuc")
+tile_map_layer = 0
+noise_layer = 0
+collection_id = 0
+scene_id = 2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_gap71"]
+seed = 982895855
+fractal_octaves = 10
+fractal_gain = 0.8
+
+[sub_resource type="Resource" id="Resource_757ac"]
+script = ExtResource("10_hb3lw")
+noise = SubResource("FastNoiseLite_gap71")
+min = -1.0
+max = -0.35
+
+[sub_resource type="Resource" id="Resource_qq2vb"]
+resource_name = "home"
+script = ExtResource("9_ivcts")
+title = "home"
+tile_info = SubResource("Resource_nuvr5")
+prevent_on_other_tile = true
+tile_noise = SubResource("Resource_757ac")
+minimum = -0.1
+maximum = 0.0
+
+[sub_resource type="Resource" id="Resource_kstno"]
+script = ExtResource("7_vx7bo")
+world_size = Vector2i(1024, 1024)
+noise_layers = Array[ExtResource("5_o2wfv")]([SubResource("Resource_ofvd2")])
+creating_tile = true
+tile = Array[ExtResource("9_ivcts")]([SubResource("Resource_wtshc"), SubResource("Resource_pkqc5"), SubResource("Resource_67iv5"), SubResource("Resource_qq2vb")])
+modifier = Array[ExtResource("5_51dmw")]([SubResource("Resource_kmjah")])
+
+[node name="TestWorld" type="Node2D"]
+
+[node name="Node2D" type="Node2D" parent="."]
+z_index = 3
+
+[node name="TileMapLayer" type="TileMapLayer" parent="Node2D"]
+z_index = 1
+tile_map_data = PackedByteArray("AAAGAAAAAAAAAAAABAAJAAsAAAAAAAAABAAKAAcAAAAAAAAABAALAAIAAAAAAAAABAALABQAAAAAAAAABAASADcAAAAAAAAABAAYAB4AAAAAAAAABAAeAAQAAAAAAAAAAQAgACkAAAAAAAAAAwAhAC8AAAAAAAAABAArAA8AAAAAAAAABAAzAAAAAAAAAAAABAA3AAYAAAAAAAAABAAUAA4AAAAAAAAABAAVABUAAAAAAAAABAAzAD4AAAAAAAAABAAAABQAAAAAAAAABAAAABUAAAAAAAAABAAAACAAAAAAAAAABAAAACIAAAAAAAAABAABAB4AAAAAAAAABAACABIAAAAAAAAABAACABMAAAAAAAAABAACABgAAAAAAAAABAACABoAAAAAAAAABAACAB0AAAAAAAAABAACAB4AAAAAAAAABAACACAAAAAAAAAABAACACEAAAAAAAAABAACACkAAAAAAAAABAADACEAAAAAAAAABAADACUAAAAAAAAABAADACgAAAAAAAAABAADACoAAAAAAAAABAAEAAAAAAAAAAAABAAEABEAAAAAAAAABAAEABQAAAAAAAAABAAEABwAAAAAAAAABAAEAB8AAAAAAAAABAAEACEAAAAAAAAABAAFABMAAAAAAAAABAAFABgAAAAAAAAABAAFABsAAAAAAAAABAAGAAMAAAAAAAAABAAGAAQAAAAAAAAABAAGAAcAAAAAAAAABAAGABIAAAAAAAAABAAGABoAAAAAAAAABAAGACQAAAAAAAAABAAGACkAAAAAAAAABAAHAAIAAAAAAAAABAAHAAoAAAAAAAAABAAHABEAAAAAAAAABAAHABgAAAAAAAAABAAHABwAAAAAAAAABAAIAAoAAAAAAAAABAAIAAwAAAAAAAAABAAIABAAAAAAAAAABAAIACsAAAAAAAAABAAJAAgAAAAAAAAABAAJAAwAAAAAAAAABAAJAA8AAAAAAAAABAAJABcAAAAAAAAABAAJABsAAAAAAAAABAAJACIAAAAAAAAABAAJACYAAAAAAAAABAAJAC0AAAAAAAAABAAKAAgAAAAAAAAABAAKAA4AAAAAAAAABAAKABYAAAAAAAAABAAKABkAAAAAAAAABAAKAB0AAAAAAAAABAAKAC4AAAAAAAAABAALAAYAAAAAAAAABAALAB8AAAAAAAAABAANAAAAAAAAAAAABAANAAsAAAAAAAAABAANAB4AAAAAAAAABAANADEAAAAAAAAABAAOAAMAAAAAAAAABAAOAAcAAAAAAAAABAAOAA4AAAAAAAAABAAPAA0AAAAAAAAABAAQAAEAAAAAAAAABAAQAAUAAAAAAAAABAASAAsAAAAAAAAABAATAAIAAAAAAAAABAATAAQAAAAAAAAABAATADYAAAAAAAAABAAUADcAAAAAAAAABAAVAAAAAAAAAAAABAAVAAUAAAAAAAAABAAVAA8AAAAAAAAABAAVABYAAAAAAAAABAAVADQAAAAAAAAABAAVADYAAAAAAAAABAAVADwAAAAAAAAABAAVAD8AAAAAAAAABAAXABEAAAAAAAAABAAXABwAAAAAAAAABAAYAA8AAAAAAAAABAAYABoAAAAAAAAABAAYADwAAAAAAAAABAAZAA8AAAAAAAAABAAZAB8AAAAAAAAABAAZAD8AAAAAAAAABAAaABYAAAAAAAAABAAaACAAAAAAAAAABAAaACMAAAAAAAAABAAaADQAAAAAAAAABAAbABcAAAAAAAAABAAbABgAAAAAAAAABAAcACEAAAAAAAAABAAcADUAAAAAAAAABAAdAAsAAAAAAAAABAAdABIAAAAAAAAABAAdADEAAAAAAAAABAAdADcAAAAAAAAABAAdAD4AAAAAAAAABAAeACMAAAAAAAAABAAeACcAAAAAAAAABAAeADYAAAAAAAAABAAfACYAAAAAAAAABAAfADIAAAAAAAAABAAgACgAAAAAAAAABAAgADsAAAAAAAAABAAhACgAAAAAAAAABAAhADMAAAAAAAAABAAiACYAAAAAAAAABAAiADEAAAAAAAAABAAkACwAAAAAAAAABAAlACcAAAAAAAAABAAmACMAAAAAAAAABAAmAC0AAAAAAAAABAAmADIAAAAAAAAABAAmADYAAAAAAAAABAAnADQAAAAAAAAABAApACgAAAAAAAAABAApACoAAAAAAAAABAApACsAAAAAAAAABAAqABAAAAAAAAAABAAqACoAAAAAAAAABAAtAAAAAAAAAAAABAAtABAAAAAAAAAABAAuAAEAAAAAAAAABAAuAAIAAAAAAAAABAAuACIAAAAAAAAABAAvACUAAAAAAAAABAAwACAAAAAAAAAABAAwACQAAAAAAAAABAAxAAEAAAAAAAAABAAxAAcAAAAAAAAABAAxAB8AAAAAAAAABAAxACoAAAAAAAAABAAyAAAAAAAAAAAABAAyAAEAAAAAAAAABAAyAAwAAAAAAAAABAAyAB4AAAAAAAAABAAyACIAAAAAAAAABAAyAC0AAAAAAAAABAAzAAsAAAAAAAAABAAzAB0AAAAAAAAABAAzACAAAAAAAAAABAAzACMAAAAAAAAABAA0AAcAAAAAAAAABAA0ADoAAAAAAAAABAA1AAUAAAAAAAAABAA1AB8AAAAAAAAABAA1ACMAAAAAAAAABAA1ACcAAAAAAAAABAA1ADwAAAAAAAAABAA2AAIAAAAAAAAABAA2AAgAAAAAAAAABAA2AAoAAAAAAAAABAA2ABoAAAAAAAAABAA2ACUAAAAAAAAABAA2ADgAAAAAAAAABAA2ADwAAAAAAAAABAA3AAcAAAAAAAAABAA3AB0AAAAAAAAABAA3AC0AAAAAAAAABAA3ADIAAAAAAAAABAA3ADgAAAAAAAAABAA4AAUAAAAAAAAABAA4ABkAAAAAAAAABAA4ABwAAAAAAAAABAA4AC8AAAAAAAAABAA4ADYAAAAAAAAABAA4AD0AAAAAAAAABAA5ABcAAAAAAAAABAA5ABoAAAAAAAAABAA5AB0AAAAAAAAABAA5AC0AAAAAAAAABAA5AC4AAAAAAAAABAA5ADwAAAAAAAAABAA6AAMAAAAAAAAABAA6AAYAAAAAAAAABAA6AB8AAAAAAAAABAA6ACwAAAAAAAAABAA6AD8AAAAAAAAABAA7AAMAAAAAAAAABAA7AAsAAAAAAAAABAA7ABAAAAAAAAAABAA7ABkAAAAAAAAABAA7ADAAAAAAAAAABAA7ADoAAAAAAAAABAA7AD4AAAAAAAAABAA8AAQAAAAAAAAABAA8ADMAAAAAAAAABAA8ADsAAAAAAAAABAA9AAEAAAAAAAAABAA9AAYAAAAAAAAABAA9AAgAAAAAAAAABAA9AA8AAAAAAAAABAA9ACwAAAAAAAAABAA9ADwAAAAAAAAABAA/AAQAAAAAAAAABAAJACoAAAAAAAAAAwANACUAAAAAAAAAAwAQACAAAAAAAAAAAwATABIAAAAAAAAAAwAVACgAAAAAAAAAAwAaACkAAAAAAAAAAwAdACgAAAAAAAAAAwA+ABUAAAAAAAAAAwA+ABYAAAAAAAAAAwA/AB0AAAAAAAAAAwAxADUAAAAAAAAAAQA=")
+tile_set = SubResource("TileSet_tbv0x")
+
+[node name="Island" type="Node2D" parent="." node_paths=PackedStringArray("tile_map_layers")]
+script = ExtResource("1_2yg1q")
+tile_map_layers = [NodePath("../Node2D/TileMapLayer"), NodePath("../Node2D/TileMapLayer")]
+settings = SubResource("Resource_kstno")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+visible = false
+script = ExtResource("6_jmc07")

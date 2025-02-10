@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://7gtgk0sk5ge2"]
+
+[ext_resource type="Texture2D" uid="uid://b31okpmfn8nk4" path="res://addons/island/preset/textures/stone.svg" id="1_p1n0g"]
+
+[node name="Sprite2D" type="TextureRect"]
+custom_minimum_size = Vector2(16, 16)
+texture = ExtResource("1_p1n0g")
+expand_mode = 1
