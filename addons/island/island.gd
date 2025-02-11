@@ -4,183 +4,182 @@ class_name Island
 extends Node2D
 
 @export var tile_map_layers: Array[TileMapLayer]
-
 @export var settings: IslandSettings
-@export var random_seed: bool = true:
-	set(value):
-		random_seed = value
-		notify_property_list_changed()
+@export var random_seed: bool = true
 
-## correction of texture size to avoid inaccuracies (Don't touch it if you don't know what you're doing)
-@export var correction: bool = true
+## Creation time before timeout, value >= 0 removes it
+@export var timeout_limit: int = 10
 
-## Simulates scrolling (useful if you want to make a planet) (very poorly optimized with the “creating tile” setting)
-@export var scrolling: bool
 func _ready() -> void:
 	generate()
 
 func generate() -> void:
+	# Начинаем отсчет времени
+	var start_time = Time.get_ticks_usec()
+
 	erase()
-	set_settings()
+	apply_settings()
 	create_land()
 	if settings.creating_tile:
-		create_tile()
+		create_tile(start_time)
+
+	if timeout_limit >= 0:
+		var elapsed_time = Time.get_ticks_usec() - start_time
+		if elapsed_time > timeout_limit:
+			print("Creation took too long (" + str(elapsed_time / 1000000.0) + " seconds). Operation canceled.")
+			return
+	
+	var total_time = Time.get_ticks_usec() - start_time
+	print("Creation finished. Time: " + str(total_time / 1000000.0) + " seconds.")
+
 
 func erase() -> void:
+	# освобождаем все дочерние узлы и очищаем слои
 	for child in get_children():
 		if child is Node:
 			child.queue_free()
-
-	for tile_map_layer in tile_map_layers:
-		tile_map_layer.clear() 
-
 	for child in get_children():
 		if child.name == "Border":
 			child.queue_free()
+	for layer in get_valid_tile_map_layers():
+		layer.clear()
 
-func set_settings() -> void:
-	for i in settings.noise_layers:
-		if i.noise_texture:
-			if i.noise_texture.noise:
-				if random_seed:
-					i.noise_texture.noise.seed = randi()
-					if settings.creating_tile:
-						for tile_data in settings.tile:
-							if tile_data.tile_noise:
-								if tile_data.tile_noise.noise:
-									tile_data.tile_noise.noise.seed = randi()
-				if correction:
-					for tile_map_layer in tile_map_layers:
-						if tile_map_layer.tile_set:
-							var correction_value = settings.world_size / tile_map_layer.tile_set.tile_size
+func apply_settings() -> void:
+	var min_size = get_min_noise_texture_size()
 
-							i.noise_texture.width = correction_value.x
-							i.noise_texture.height = correction_value.y
-							
-							if i.falloff_map:
-								i.falloff_map.width = correction_value.x
-								i.falloff_map.height = correction_value.y
-
+	for noise_layer in get_valid_noise_texture():
+		noise_layer.noise_texture.width = min_size.x
+		noise_layer.noise_texture.height = min_size.y
+		
+		if noise_layer.falloff_map:
+			noise_layer.falloff_map.width = min_size.x
+			noise_layer.falloff_map.height = min_size.y
+		
+	# настраиваем шумовые слои
 	if settings.modifier:
-		modifier_application()
+		apply_modifier()
 
-	if scrolling:
-		random_seed = false
+	if random_seed:
+		for noise_layer in get_valid_noise_texture():
+			noise_layer.noise_texture.noise.seed = randi()
 
-		var timer = Timer.new()
-		timer.name = "ScrollingOffset"
-		timer.wait_time = 0.001
-		timer.autostart = true
-		timer.timeout.connect(scrolling_offset)
-		add_child(timer)
+		if settings.creating_tile:
+			for tile_data in settings.tile:
+				if tile_data.tile_noise and tile_data.tile_noise.noise:
+					tile_data.tile_noise.noise.seed = randi()
+
+func get_valid_tile_map_layers() -> Array:
+	var valid_tile_map_layers = []
+	for layer in tile_map_layers:
+		if layer != null and layer.tile_set != null:
+			valid_tile_map_layers.append(layer)
+	return valid_tile_map_layers
+
+func get_valid_noise_texture() -> Array:
+	var noise_texture = []
+	for noise_layer in settings.noise_layers:
+		if noise_layer.noise_texture and noise_layer.noise_texture.noise:
+			noise_texture.append(noise_layer)
+	return noise_texture
+
+func get_min_noise_texture_size() -> Vector2i:
+	var max_size = Vector2i.ZERO
+	var max_tile_size = Vector2i.ZERO
+	
+	# Находим слой с самым большим tile_size
+	for layer in get_valid_tile_map_layers():
+		if layer.tile_set and layer.tile_set.tile_size.x * layer.tile_set.tile_size.y > max_tile_size.x * max_tile_size.y:
+			max_tile_size = layer.tile_set.tile_size
+	
+	# Вычисляем размер noise_texture
+	if max_tile_size != Vector2i.ZERO:
+		max_size = settings.world_size / max_tile_size
+	
+	return max_size
+
+
+func apply_modifier() -> void:
+	# применяем модификаторы, например границу острова
+	for modifier in settings.modifier:
+		if not modifier.enabled:
+			continue
+		if modifier is IslandBorder:
+			var border = preload("res://addons/island/modifiers/border/border.tscn")
+			var instance = border.instantiate()
+			instance.size = settings.world_size
+			instance.inner_size = Vector2i(modifier.inner_size, modifier.inner_size)
+			instance.color = modifier.color
+			add_child(instance)
 
 func create_land() -> void:
-	for i in settings.noise_layers:
-		
-		if i.noise_texture:
-			var noise_texture_size = Vector2i(i.noise_texture.width, i.noise_texture.height)
-			var land_scale = settings.world_size / noise_texture_size
-			var land = ColorRect.new()
-			var shader_material = ShaderMaterial.new()
+	# создаем ландшафт для каждого шумового слоя
+	for noise_layer in get_valid_noise_texture():
+		if not noise_layer.noise_texture:
+			continue
+		var tex_size = Vector2i(noise_layer.noise_texture.width, noise_layer.noise_texture.height)
+		var land_scale = settings.world_size / tex_size
+		var land = ColorRect.new()
+		if noise_layer.title:
+			land.name = noise_layer.title
+		land.size = tex_size
+		land.scale = land_scale
+		var shader_mat = ShaderMaterial.new()
+		shader_mat.shader = load("res://addons/island/shader/coloring.gdshader")
+		shader_mat.set_shader_parameter("noise_texture", noise_layer.noise_texture)
+		shader_mat.set_shader_parameter("coloring", noise_layer.coloring)
+		shader_mat.set_shader_parameter("falloff_map", noise_layer.falloff_map)
+		land.material = shader_mat
+		add_child(land)
 
-			land.name = i.title
-			land.size = noise_texture_size
-			land.scale = land_scale
-
-			shader_material.shader = load("res://addons/island/shader/coloring.gdshader")
-
-			# Передаем параметры текстуры в шейдер
-			shader_material.set_shader_parameter("noise_texture", i.noise_texture)
-			shader_material.set_shader_parameter("coloring", i.coloring)
-			shader_material.set_shader_parameter("falloff_map", i.falloff_map)
-
-			land.material = shader_material
-			add_child(land)
-	
-func create_tile() -> void:
+func create_tile(start_time: int) -> void:
 	for tile_data in settings.tile:
-		if tile_data.tile_info:
-			if tile_data.tile_info.tile_map_layer < tile_map_layers.size() and tile_data.tile_info.noise_layer < settings.noise_layers.size():
+		if not tile_data.enabled or not tile_data.tile_info:
+			continue
+		if tile_data.tile_info.tile_map_layer >= tile_map_layers.size() or tile_data.tile_info.noise_layer >= settings.noise_layers.size():
+			continue
+		var layer = tile_map_layers[tile_data.tile_info.tile_map_layer]
+		var noise_layer = get_valid_noise_texture()[tile_data.tile_info.noise_layer]
+		var scene_collection = tile_data.tile_info.collection_id
+		var scene = tile_data.tile_info.scene_id
+		var tile_dims = settings.world_size / layer.tile_set.tile_size
+		var current_tile_size = layer.tile_set.tile_size
+		var noise_texture_size = Vector2(noise_layer.noise_texture.width, noise_layer.noise_texture.height)
+		var t = Vector2(tile_dims.x, tile_dims.y) / noise_texture_size
+		for x in range(tile_dims.x):
+			if timeout_limit >= 0 and (Time.get_ticks_usec() - start_time) > timeout_limit * 1000000:
+				return
+			for y in range(tile_dims.y):
+				if timeout_limit >= 0 and (Time.get_ticks_usec() - start_time) > timeout_limit * 1000000:
+					return
+				var pos = Vector2i(x, y)
+				if tile_data.prevent_on_other_tile and is_tile_occupied(pos, current_tile_size):
+					continue
+				var sample_x = x / t.x
+				var sample_y = y / t.y
+				var noise_val = noise_layer.noise_texture.noise.get_noise_2d(sample_x, sample_y)
+				if noise_layer.falloff_map:
+					var sample_ix = int(sample_x)
+					var sample_iy = int(sample_y)
+					var falloff_val = noise_layer.falloff_map.get_image().get_pixel(sample_ix, sample_iy).r
+					noise_val /= falloff_val
+				if noise_val < tile_data.minimum or noise_val > tile_data.maximum:
+					continue
+				var can_place = true
+				if tile_data.tile_noise and tile_data.tile_noise.noise:
+					var tile_noise_val = tile_data.tile_noise.noise.get_noise_2d(sample_x, sample_y)
+					can_place = tile_noise_val >= tile_data.tile_noise.min and tile_noise_val <= tile_data.tile_noise.max
+				if can_place:
+					layer.set_cell(pos, scene_collection, Vector2i(0, 0), scene)
 
-				var tile_map_layer = tile_map_layers[tile_data.tile_info.tile_map_layer]
-				var noise_layer = tile_data.tile_info.noise_layer
-
-				var scene_collection = tile_data.tile_info.collection_id
-				var scene = tile_data.tile_info.scene_id
-
-				var tile_dimensions = settings.world_size / tile_map_layer.tile_set.tile_size
-				var current_tile_size = tile_map_layer.tile_set.tile_size
-
-				# Пройдем по всем тайлам и разместим соответствующий тайл в зависимости от шума
-				for x in range(tile_dimensions.x):
-					for y in range(tile_dimensions.y):
-						var tile_position = Vector2i(x, y)
-
-						# Проверяем наличие других плиток, если prevent_on_other_tile включен
-						if tile_data.prevent_on_other_tile:
-							var occupied = false
-							for layer in tile_map_layers:
-								if layer.tile_set:
-									var layer_tile_size = layer.tile_set.tile_size
-									
-									# Переводим координаты в другой слой с учетом размера тайлов
-									var adjusted_position = Vector2i(
-										(tile_position.x * current_tile_size.x) / layer_tile_size.x,
-										(tile_position.y * current_tile_size.y) / layer_tile_size.y
-									)
-
-									if layer.get_cell_source_id(adjusted_position) != -1:
-										occupied = true
-										break
-								if occupied:
-									continue
-
-						# Получаем шум для текущей позиции
-						if settings.noise_layers[noise_layer].noise_texture.noise:
-							var noise_value = settings.noise_layers[noise_layer].noise_texture.noise.get_noise_2d(x, y)
-							# получаем falloff_map
-							if settings.noise_layers[noise_layer].falloff_map:
-								var falloff_map = settings.noise_layers[noise_layer].falloff_map 
-								var falloff_image = settings.noise_layers[noise_layer].falloff_map.get_image()
-								var falloff_value = falloff_image.get_pixel(x, y).r
-								noise_value /= falloff_value
-
-							# Проверяем, попадает ли значение шума в первый допустимый диапазон
-							if noise_value >= tile_data.minimum and noise_value <= tile_data.maximum:
-								var can_place = true  # Флаг, можно ли размещать плитку
-
-								# Если tile_noise задан, проверяем его
-								if tile_data.tile_noise and tile_data.tile_noise.noise:
-									var tile_noise_value = tile_data.tile_noise.noise.get_noise_2d(x, y)
-									can_place = tile_noise_value >= tile_data.tile_noise.min and tile_noise_value <= tile_data.tile_noise.max
-
-								# Если проверка прошла, устанавливаем тайл
-								if can_place:
-									tile_map_layer.set_cell(tile_position, scene_collection, Vector2i(0, 0), scene)
-
-func modifier_application() -> void:
-	for modifier in settings.modifier:
-		if modifier.enabled:
-			if modifier is IslandBorder:
-				var border = preload("res://addons/island/modifiers/border/border.tscn")
-				var instance = border.instantiate()
-				instance.size = settings.world_size
-				instance.inner_size = modifier.inner_size
-				instance.color = modifier.color
-				add_child(instance)
-
-
-func scrolling_offset() -> void:
-	for noise_layer in settings.noise_layers:
-		noise_layer.noise_texture.noise.offset.x += 0.01
-		noise_layer.noise_texture.noise.offset.y += 0.01
-	
-	if settings.creating_tile:
-		for tile in settings.tile:
-			if tile.tile_noise.noise:
-				tile.tile_noise.noise.offset.x +=0.01
-				tile.tile_noise.noise.offset.y +=0.01
-
-		for tile_map_layer in tile_map_layers:
-			tile_map_layer.clear()
-		create_tile()
+func is_tile_occupied(pos: Vector2i, current_size: Vector2i) -> bool:
+	# проверяем занятость позиции в других слоях
+	for layer in get_valid_tile_map_layers():
+		if not layer.tile_set:
+			continue
+		var adjusted = Vector2i(
+			(pos.x * current_size.x) / layer.tile_set.tile_size.x,
+			(pos.y * current_size.y) / layer.tile_set.tile_size.y
+		)
+		if layer.get_cell_source_id(adjusted) != -1:
+			return true
+	return false

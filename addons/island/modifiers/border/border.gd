@@ -2,33 +2,32 @@
 extends StaticBody2D
 
 @export var size: Vector2i
-@export var inner_size: int  # размер границы
+@export var inner_size: Vector2i
 @export var color: Color
 
 @onready var polygon_2d: Polygon2D = $Polygon2D
 @onready var collision_polygon_2d: CollisionPolygon2D = $CollisionPolygon2D
 
-func _ready() -> void:
-	if inner_size:
-		var map_center = size / 2
-		var outer_half = size / 2
-		var inner_half = int((size.x - inner_size) / 2)
-	  # вычисляем внутреннюю область на основе размера границы
+func _ready() -> void:  
+	create()
 
-		collision_polygon_2d.polygon = [
-			# внешние точки (фиксированы)
-			map_center + Vector2i(-outer_half.x, -outer_half.y),
-			map_center + Vector2i(outer_half.x, -outer_half.y),
-			map_center + Vector2i(outer_half.x, outer_half.y),
-			map_center + Vector2i(-outer_half.x, outer_half.y),
-			map_center + Vector2i(-outer_half.x, -outer_half.y),
-			# внутренние точки (вычисляются на основе inner_size)
-			map_center + Vector2i(-inner_half, -inner_half),
-			map_center + Vector2i(-inner_half, inner_half),
-			map_center + Vector2i(inner_half, inner_half),
-			map_center + Vector2i(inner_half, -inner_half),
-			map_center + Vector2i(-inner_half, -inner_half)
-		]
-		
-		polygon_2d.color = color
-		polygon_2d.polygon = collision_polygon_2d.polygon
+func create() -> void:
+	if inner_size:  
+		var outer_rect = [  
+			Vector2(0, 0),  
+			Vector2(size.x, 0),  
+			Vector2(size.x, size.y),  
+			Vector2(0, size.y)  
+		]  
+
+		var inner_rect = [  
+			Vector2(inner_size.x, inner_size.y),  
+			Vector2(inner_size.x, size.y - inner_size.y),  
+			Vector2(size.x - inner_size.x, size.y - inner_size.y),  
+			Vector2(size.x - inner_size.x, inner_size.y)  
+		]  
+
+		var final_polygon = outer_rect + inner_rect  
+		collision_polygon_2d.polygon = final_polygon  
+		polygon_2d.polygon = final_polygon  
+		polygon_2d.color = color  

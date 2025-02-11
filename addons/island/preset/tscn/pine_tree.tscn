@@ -3,6 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://cm7rti2b10kvd" path="res://addons/island/preset/textures/pine-tree.svg" id="1_a2plv"]
 
 [node name="PineTree" type="TextureRect"]
-custom_minimum_size = Vector2(16, 16)
+custom_minimum_size = Vector2(32, 32)
+offset_right = 16.0
+offset_bottom = 16.0
 texture = ExtResource("1_a2plv")
 expand_mode = 1

@@ -7,7 +7,7 @@ extends Resource
 @export_group("Thresholds")
 
 ## The minimum threshold
-@export_range(-1, 1) var min: float = 0:
+@export_range(-1, 1) var min: float = 1:
 	set(value):
 		min = value
 		if min > max:

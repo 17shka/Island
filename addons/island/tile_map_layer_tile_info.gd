@@ -6,4 +6,4 @@ extends Resource
 @export var tile_map_layer: int
 @export	var noise_layer: int
 @export var collection_id: int
-@export var scene_id: int = 1
+@export var scene_id: int

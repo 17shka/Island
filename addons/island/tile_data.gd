@@ -2,6 +2,7 @@
 class_name IslandTileData
 extends Resource
 
+@export var enabled: bool = true
 @export var title: String = "":
 	set(value):
 		title = value
