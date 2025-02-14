@@ -4,5 +4,7 @@
 
 [node name="Canoe" type="TextureRect"]
 custom_minimum_size = Vector2(16, 16)
+offset_right = 16.0
+offset_bottom = 16.0
 texture = ExtResource("1_ftwsp")
 expand_mode = 1

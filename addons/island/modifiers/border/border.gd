@@ -12,22 +12,20 @@ func _ready() -> void:
 	create()
 
 func create() -> void:
-	if inner_size:  
-		var outer_rect = [  
-			Vector2(0, 0),  
-			Vector2(size.x, 0),  
-			Vector2(size.x, size.y),  
-			Vector2(0, size.y)  
-		]  
+	var rect = [  
+		Vector2i(0, 0), 
+		Vector2i(size.x, 0),  
+		Vector2i(size),  
+		Vector2i(0, size.y),
+		Vector2i(0, 0),
 
-		var inner_rect = [  
-			Vector2(inner_size.x, inner_size.y),  
-			Vector2(inner_size.x, size.y - inner_size.y),  
-			Vector2(size.x - inner_size.x, size.y - inner_size.y),  
-			Vector2(size.x - inner_size.x, inner_size.y)  
-		]  
+		Vector2i(inner_size),  
+		Vector2i(inner_size.x, size.y - inner_size.y),  
+		Vector2i(size - inner_size),  
+		Vector2i(size.x - inner_size.x, inner_size.y),
+		Vector2i(inner_size)
+	]
 
-		var final_polygon = outer_rect + inner_rect  
-		collision_polygon_2d.polygon = final_polygon  
-		polygon_2d.polygon = final_polygon  
-		polygon_2d.color = color  
+	collision_polygon_2d.polygon = rect  
+	polygon_2d.polygon = rect  
+	polygon_2d.color = color

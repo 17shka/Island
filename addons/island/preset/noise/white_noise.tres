@@ -2,7 +2,7 @@
 
 [resource]
 noise_type = 0
-seed = -392501473
+seed = -155694142
 frequency = 1.0
 fractal_type = 0
 cellular_distance_function = 3
