@@ -14,6 +14,7 @@ extends Resource
 		if scene and scene.resource_path:
 			resource_name = scene.resource_path.get_file().get_basename()
 
+@export var z_index: int
 @export var spacing: Vector2i = Vector2i(1, 1):
 	set(value):
 		spacing = Vector2i(max(1, value.x), max(1, value.y))

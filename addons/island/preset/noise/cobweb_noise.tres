@@ -2,7 +2,7 @@
 
 [resource]
 noise_type = 2
-seed = 1834640063
+seed = -1961246792
 fractal_type = 3
 fractal_octaves = 4
 fractal_gain = 0.9

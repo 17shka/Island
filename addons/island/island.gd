@@ -7,6 +7,7 @@ extends Node2D
 @export var random_seed: bool = true
 @export var timeout_limit: int = 10
 
+var seed: int = randi()
 var land_layers: Array = []
 
 func _ready() -> void:
@@ -24,27 +25,24 @@ func generate() -> void:
 	print("Creation finished. Time: " + str(total_time / 1000000.0) + " seconds.")
 
 func erase() -> void:
-	if land_layers.size() > 0:
-		for layer in land_layers:
-			layer.queue_free()
-		land_layers.clear() 
 
+	land_layers.clear()
 	for child in get_children():
-		if child.name == "Border":
-			child.queue_free()
-
+		child.queue_free()
+	
 
 func apply_settings() -> void:
 	if settings.modifier:
 		apply_modifier()
 	if random_seed:
-		for noise_layer in get_valid_noise_texture():
-			for noise in noise_layer.noises:
-				noise.seed = randi()
-		if settings.enabled_scene:
-			for scene_data in settings.scenes:
-				if scene_data.noise and scene_data.noise.noise:
-					scene_data.noise.noise.seed = randi()
+		seed = randi()
+	for noise_layer in get_valid_noise_texture():
+		for noise in noise_layer.noises:
+			noise.seed = seed
+	if settings.enabled_scene:
+		for scene_data in settings.scenes:
+			if scene_data.noise and scene_data.noise.noise:
+				scene_data.noise.noise.seed = seed
 
 func apply_modifier() -> void:
 	for modifier in settings.modifier:
@@ -98,8 +96,9 @@ func generate_noise_texture(size: Vector2i, noises: Array, falloff_map: Gradient
 			value /= noises.size()
 			value = (value - min_val) / (max_val - min_val) # нормализация [0,1]
 
-			var falloff_value = falloff_map.get_image().get_pixel(x * falloff_map.get_width() / size.x, y * falloff_map.get_height() / size.y).r
-			value *= falloff_value # наложение falloff_map
+			if falloff_map:
+				var falloff_value = falloff_map.get_image().get_pixel(x * falloff_map.get_width() / size.x, y * falloff_map.get_height() / size.y).r
+				value *= falloff_value # наложение falloff_map
 			img.set_pixel(x, y, Color(value, value, value))
 
 	var texture = ImageTexture.create_from_image(img)
@@ -135,23 +134,28 @@ func create_scene(start_time: int, timeout_limit_us: int) -> void:
 		return
 
 	var placed_positions := []
-	for scene in settings.scenes:
-		if not scene.enabled or not scene.scene or scene.layer > land_layers.size() - 1:
+	var scene_count := settings.scenes.size()
+
+	for i in scene_count:
+		var scene = settings.scenes[i]
+		if not scene.enabled or not scene.scene or scene.layer >= land_layers.size():
 			continue
 
 		var noise_layer = settings.noise_layers[scene.layer]
 		var texture = noise_layer.texture
-		var falloff_map = noise_layer.falloff_map
+		var texture_img = texture.get_image()
 		var texture_size = Vector2i(texture.get_width(), texture.get_height())
 		var land_scale = settings.world_size / texture_size
 
-		for x in range(texture_size.x):
-			for y in range(texture_size.y):
+		var spacing_sqr = scene.spacing.length_squared()
+
+		for x in texture_size.x:
+			for y in texture_size.y:
 				if timeout_limit_us > 0 and Time.get_ticks_usec() - start_time > timeout_limit_us:
 					print("Scene generation timed out.")
 					return
 
-				var pixel_value = texture.get_image().get_pixel(x, y).r
+				var pixel_value = texture_img.get_pixel(x, y).r
 				if pixel_value < scene.minimum or pixel_value > scene.maximum:
 					continue
 
@@ -161,15 +165,23 @@ func create_scene(start_time: int, timeout_limit_us: int) -> void:
 						continue
 
 				var world_pos = Vector2i(x, y) * land_scale
-				var can_place = true
 
+				# проверяем расстояние до всех ранее размещенных объектов
+				var can_place = true
 				for placed in placed_positions:
-					if world_pos.distance_to(placed) < scene.spacing.length():
+					if world_pos.distance_squared_to(placed) < spacing_sqr:
 						can_place = false
 						break
 
 				if can_place:
 					var instance = scene.scene.instantiate()
 					instance.position = world_pos
-					land_layers[scene.layer].add_child(instance)
+					instance.z_index += scene.z_index
+					instance.z_as_relative = false
+					#land_layers[scene.layer].add_child(instance)
+					add_child(instance)
 					placed_positions.append(world_pos)
+
+					# ограничиваем список, но сохраняем больше значений
+					if placed_positions.size() > 50000:
+						placed_positions = placed_positions.slice(-25000, placed_positions.size())  # оставляем последние 25000

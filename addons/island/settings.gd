@@ -9,6 +9,14 @@ extends Resource
 			value[-1] = value[-1] if value[-1] is IslandNoiseLayer else IslandNoiseLayer.new()
 		noise_layers = value
 
+@export_group("Region")
+@export var enabled_region: bool
+@export var region: Array[IslandRegion]:
+	set(value):
+		if value.size() > 0:
+			value[-1] = value[-1] if value[-1] is IslandRegion else IslandRegion.new()
+		region = value
+
 @export_group("Scene")
 @export var enabled_scene: bool
 @export var scenes: Array[IslandSceneData]:
